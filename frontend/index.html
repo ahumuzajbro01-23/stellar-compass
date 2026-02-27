@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stellar Compass - Universal DeFi Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #4b0082 0%, #1a1a1a 100%);
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(75, 0, 130, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 228, 226, 0.2);
+        }
+        .card {
+            background: rgba(45, 45, 45, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(75, 0, 130, 0.2);
+            border: 1px solid rgba(75, 0, 130, 0.3);
+        }
+        .wallet-option {
+            transition: all 0.3s;
+            background: #E5E4E2;
+        }
+        .wallet-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(75, 0, 130, 0.4);
+            border-color: #4b0082 !important;
+        }
+        #wallet-menu {
+            transition: all 0.3s ease-in-out;
+            background: #2d2d2d;
+            border: 1px solid rgba(75, 0, 130, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="glass text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+<div class="flex items-center space-x-2">
+                <h1 class="text-2xl font-bold">Stellar Compass</h1>
+            </div>
+            
+            <!-- Hamburger Menu Button -->
+            <div class="relative">
+                <button id="menu-btn" onclick="toggleMenu()" 
+                    class="hidden bg-white text-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition flex items-center space-x-2" style="background: #E5E4E2; color: #4b0082;">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    <span>Wallets</span>
+                </button>
+                
+                <!-- Connect Button (shown when not connected) -->
+                <button id="connect-btn" onclick="toggleMenu()" 
+                    class="bg-white text-purple-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition flex items-center space-x-2" style="background: #E5E4E2; color: #4b0082;">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <span>Connect Wallet</span>
+                </button>
+                
+                <!-- Wallet Info (shown when connected) -->
+                <div id="wallet-info" class="hidden">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-sm flex items-center space-x-2">
+<span id="wallet-icon"></span>
+                            <span id="wallet-address"></span>
+                        </span>
+                        <button onclick="disconnectWallet()" 
+                            class="bg-red-500 px-4 py-2 rounded-lg text-sm hover:bg-red-600 transition">
+                            Disconnect
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dropdown Wallet Menu -->
+                <div id="wallet-menu" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-2xl z-50 overflow-hidden">
+                    <div class="p-4 text-white rounded-t-lg" style="background: #4b0082;">
+                        <h3 class="font-bold text-lg">Choose Your Wallet</h3>
+                        <p class="text-sm opacity-90">Select from any Stellar wallet</p>
+                    </div>
+                    
+                    <div class="p-4 space-y-3">
+                        <!-- Freighter -->
+<button onclick="connectFreighter()" class="wallet-option w-full p-4 border-2 rounded-lg flex items-center space-x-4" style="border-color: #4b0082; color: #333;">
+                            <div class="text-left flex-1">
+                                <h4 class="font-bold" style="color: #4b0082;">Freighter</h4>
+                                <p class="text-xs" style="color: #666;">Browser Extension</p>
+                            </div>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #4b0082;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Rabet -->
+<button onclick="connectRabet()" class="wallet-option w-full p-4 border-2 rounded-lg flex items-center space-x-4" style="border-color: #4b0082; color: #333;">
+                            <div class="text-left flex-1">
+                                <h4 class="font-bold" style="color: #4b0082;">Rabet</h4>
+                                <p class="text-xs" style="color: #666;">Browser Extension</p>
+                            </div>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #4b0082;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- xBull -->
+<button onclick="connectXBull()" class="wallet-option w-full p-4 border-2 rounded-lg flex items-center space-x-4" style="border-color: #4b0082; color: #333;">
+                            <div class="text-left flex-1">
+                                <h4 class="font-bold" style="color: #4b0082;">xBull</h4>
+                                <p class="text-xs" style="color: #666;">Browser Extension</p>
+                            </div>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #4b0082;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Albedo -->
+<button onclick="connectAlbedo()" class="wallet-option w-full p-4 border-2 rounded-lg flex items-center space-x-4" style="border-color: #4b0082; color: #333;">
+                            <div class="text-left flex-1">
+                                <h4 class="font-bold" style="color: #4b0082;">Albedo</h4>
+                                <p class="text-xs" style="color: #666;">Web-Based</p>
+                            </div>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #4b0082;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Lobstr -->
+<button onclick="connectManual('Lobstr')" class="wallet-option w-full p-4 border-2 rounded-lg flex items-center space-x-4" style="border-color: #4b0082; color: #333;">
+                            <div class="text-left flex-1">
+                                <h4 class="font-bold" style="color: #4b0082;">Lobstr</h4>
+                                <p class="text-xs" style="color: #666;">Manual Entry</p>
+                            </div>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #4b0082;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Divider -->
+                        <div class="border-t" style="border-color: #4b0082;"></div>
+
+                        <!-- Custom Wallet (Any Other) -->
+<button onclick="connectManual('Custom')" class="wallet-option w-full p-4 border-2 border-dashed rounded-lg flex items-center space-x-4" style="border-color: #4b0082; color: #4b0082;">
+                            <div class="text-left flex-1">
+                                <h4 class="font-bold">Other Wallet</h4>
+                                <p class="text-xs">Custom / Any Address</p>
+                            </div>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #4b0082;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Help Footer -->
+                    <div class="p-4 border-t" style="background: #242424; border-color: #4b0082;">
+<p class="text-xs text-center" style="color: #b8b7b4;">
+                            Can't find your wallet? Use <strong>Other Wallet</strong> option
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-12" style="color: #E5E4E2;">
+<h2 class="text-4xl font-bold mb-4">Your Universal DeFi Assistant</h2>
+            <p class="text-xl opacity-90">Maximize your yields on the Stellar blockchain</p>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="hidden">
+            <!-- Portfolio Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="card p-6">
+                    <div class="flex items-center justify-between mb-2">
+<h3 style="color: #b8b7b4; font-size: 0.875rem;">Total Portfolio Value</h3>
+                    </div>
+                    <p class="text-3xl font-bold" id="total-value" style="color: #4b0082;">$0.00</p>
+                </div>
+                <div class="card p-6">
+                    <div class="flex items-center justify-between mb-2">
+<h3 style="color: #b8b7b4; font-size: 0.875rem;">Active Assets</h3>
+                    </div>
+                    <p class="text-3xl font-bold" id="asset-count" style="color: #4b0082;">0</p>
+                </div>
+                <div class="card p-6">
+                    <div class="flex items-center justify-between mb-2">
+<h3 style="color: #b8b7b4; font-size: 0.875rem;">Idle Assets</h3>
+                    </div>
+                    <p class="text-3xl font-bold" id="idle-count" style="color: #4b0082;">0</p>
+                </div>
+            </div>
+
+            <!-- Assets & Opportunities -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Your Assets -->
+                <div class="card p-6">
+<h3 class="text-2xl font-bold mb-4 flex items-center" style="color: #E5E4E2;">
+                        Your Assets
+                    </h3>
+                    <div id="assets-list" class="space-y-3">
+                        <p style="color: #b8b7b4;">Connect your wallet to view assets</p>
+                    </div>
+                </div>
+
+                <!-- DeFi Opportunities -->
+                <div class="card p-6">
+<h3 class="text-2xl font-bold mb-4 flex items-center" style="color: #E5E4E2;">
+                        DeFi Opportunities
+                    </h3>
+                    <div id="opportunities-list" class="space-y-3">
+                        <p style="color: #b8b7b4;">Connect your wallet to see opportunities</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Get Started Section -->
+        <div id="get-started" class="text-center">
+            <div class="card p-12 max-w-2xl mx-auto">
+<div class="mb-8">
+                </div>
+                <h3 class="text-3xl font-bold mb-4" style="color: #E5E4E2;">Connect Your Stellar Wallet</h3>
+                <p class="mb-8" style="color: #b8b7b4;">
+                    Track your portfolio and discover high-yield DeFi opportunities
+                </p>
+                
+                <button onclick="toggleMenu()" 
+                    class="text-white px-8 py-4 rounded-lg text-lg font-semibold transition shadow-lg flex items-center justify-center mx-auto space-x-2" style="background: #4b0082;">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <span>Choose Wallet</span>
+                </button>
+                
+<p class="text-sm mt-6" style="color: #666;">
+                    You'll receive email notifications for wallet connection and portfolio updates
+                </p>
+                
+                <div class="mt-8 pt-8" style="border-top: 1px solid rgba(75, 0, 130, 0.3);">
+                    <p class="text-xs mb-3" style="color: #b8b7b4;">Supports all Stellar wallets:</p>
+<div class="flex justify-center space-x-3 text-3xl mb-2">
+                        <span title="Freighter"></span>
+                        <span title="Rabet"></span>
+                        <span title="xBull"></span>
+                        <span title="Albedo"></span>
+                        <span title="Lobstr"></span>
+                        <span title="Custom"></span>
+                    </div>
+                    <p class="text-xs italic" style="color: #666;">+ Any other Stellar wallet via manual entry</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-8 mt-16" style="color: #E5E4E2; background: rgba(75, 0, 130, 0.1); border-top: 1px solid rgba(75, 0, 130, 0.3);">
+        <p class="opacity-75">© 2026 Stellar Compass. Empowering everyday crypto holders.</p>
+    </footer>
+
+    <!-- Main App Script -->
+    <script src="app.js"></script>
+</body>
+</html>
